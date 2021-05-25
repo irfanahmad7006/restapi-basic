@@ -1,15 +1,19 @@
 package com.api.client;
 
 
+
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,5 +49,36 @@ public class RestClient {
         //Convert response String into Json object
         JSONObject resJsonObject = new JSONObject(resString);
         System.out.println("Response in Json Object----> "+ resJsonObject);
+
+
+
     }
+
+    public CloseableHttpResponse getExecuteMethod(String url) throws IOException {
+        CloseableHttpClient client=HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpResponse response=client.execute(httpGet);
+        return response;
+    }
+
+    public CloseableHttpResponse getExecuteMethod(String url, HashMap<String,String> hashMap) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpGet httpGet = new HttpGet(url);
+        for(Map.Entry<String,String> entry: hashMap.entrySet()){
+            httpGet.addHeader(entry.getKey(),entry.getValue());
+        }
+        return client.execute(httpGet);
+    }
+
+    public void postMethodCall(String url,String payload,HashMap<String, String> headers) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(url);
+        post.setEntity(new StringEntity(payload));
+        for (Map.Entry<String ,String> entry: headers.entrySet()) {
+            post.addHeader(entry.getKey(),entry.getValue());
+        }
+        CloseableHttpResponse response = client.execute(post);
+
+    }
+
 }
